@@ -38,23 +38,17 @@ class LSTMModel(object):
         return self
 
     def _fit(self, x_train, y_train):
-        print(x_train.shape)
         if x_train.shape[0] < 1:
             raise ValueError("x_train must be a matrix with some instances.")
         if x_train.ndim == 1:
-            print(x_train.shape)
-            adp_x, adp_y = self._split_sequence(x_train, self._win_param, len(y_train))
-            print(adp_x.shape)
+            adp_x, adp_y = self._split_sequence(numpy.concatenate((x_train, y_train)), self._win_param, len(y_train))
             adp_x = adp_x.reshape((adp_x.shape[0], adp_x.shape[1], 1))
-            print(self._LSTM_model)
-            print(self._fit_params)
-            print(adp_x.shape)
-            self._model = self._LSTM_model.fit(adp_x, adp_y, **self._fit_params)
+            self._LSTM_model.fit(adp_x, adp_y, **self._fit_params)
         else:
             self._instance_window_size = x_train.shape[1]
             func_to_get_model = self._func_to_generate_model(self._LSTM_model, self._win_param, self._fit_params)
             LSTM_model = self._model_selection_function(x_train, y_train, func_to_get_model)
-            self._model = LSTM_model._model
+            self._model = LSTM_model._LSTM_model
 
     @classmethod
     def _func_to_generate_model(cls, LSTM_model, win_parm, fit_params):
@@ -76,7 +70,8 @@ class LSTMModel(object):
             raise ValueError("x values has wrong dimensions")
 
     def _predict_n_samples(self, instance, n_samples):
-        forecast = self._model.predict(instance.reshape(1, -1, 1))[0, :]
+        adp_instance = instance[-self._win_param:].reshape(1, -1, 1)
+        forecast = self._model.predict(adp_instance)[0, :]
         if len(forecast) > n_samples:
             raise ValueError("Num of samples is greater than the output of the neural network")
         return forecast[0:n_samples]
