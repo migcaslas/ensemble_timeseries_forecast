@@ -4,7 +4,7 @@ from ._instance_grouping_model import _InstanceGroupingModel
 from ._regression_model_table import _RegressionModelTable
 
 
-class EnsemblePrediction(object):
+class EnsembleModel(object):
 
     def __init__(self, cluster_model, regression_models, classifier_model=None, adapt_data_for_cluster_function=None,
                  function_to_evaluate_model=None, function_to_select_model=None):

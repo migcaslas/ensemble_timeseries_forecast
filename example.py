@@ -6,7 +6,7 @@ from window_functions.windowing_data import WindowingData
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
-from model.ensemble_prediction import EnsemblePrediction
+from model.ensemble_model import EnsembleModel
 from sklearn.cluster import KMeans
 
 from regression_selection.train_multiple_models import TrainMultipleModels
@@ -76,7 +76,7 @@ reg_model_evaluate_func = EvaluateModel.split_evaluate_function(test_size=0.33, 
 # reg_model_evaluate_func = EvaluateModel.split_evaluate_function(test_size=0.0033, evaluate_func=ErrorComputation.MAPE)
 reg_model_selection_func = EvaluateModel.select_min_error_model
 
-ensemble_model = EnsemblePrediction(kmeans, reg_models,
+ensemble_model = EnsembleModel(kmeans, reg_models,
                                     function_to_evaluate_model=reg_model_evaluate_func,
                                     function_to_select_model=reg_model_selection_func)
 
