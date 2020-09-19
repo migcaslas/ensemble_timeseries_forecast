@@ -12,7 +12,7 @@ class SelectBestModel(object):
             for IDX, M in enumerate(models):
                 models_matrix[IDX, :] = cls.evaluate_model(M, x_matrix, y_matrix, evaluate_func, func_to_predict)
             selected_model = selection_func(models, models_matrix)
-            print("Best model", selected_model)
+            print("\tComputed best params for: %s" % selected_model)
             return selected_model
         return func
 

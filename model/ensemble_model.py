@@ -82,12 +82,12 @@ class EnsembleModel(object):
         self._regression_model_table.initialize_tables(label_names)
 
     def _fit_regression_model(self, x, y, label_name):
-        print("Training cluster label: %s, num_instances: %s" % (label_name, x.shape[0]))
+        print("-> Training cluster label: %s, num_instances: %s" % (label_name, x.shape[0]))
         if self._flag_evaluate_regression_models:
             self._regression_model_table.evaluate_label_models(x, y, label_name)
-        reg_model = self._regression_model_table.return_selected_label_model(label_name)
-        fit_reg_model = reg_model.fit(x, y)
-        self._regression_model_table.set_label_regression_model(fit_reg_model, label_name)
+        fig_reg_model = self._regression_model_table.return_selected_label_model(label_name)
+        print("\tSelected best model: %s" % fig_reg_model)
+        self._regression_model_table.set_label_regression_model(fig_reg_model, label_name)
 
     def predict(self, x, n_samples, extra_var_matrix=None, instance_labels=None):
         if instance_labels is None:

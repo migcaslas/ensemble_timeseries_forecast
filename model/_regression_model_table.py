@@ -14,6 +14,7 @@ class _RegressionModelTable(object):
 
         self._regression_model_list = regression_models
         self._table_evaluation_dict = {}
+        self._all_fit_models_table_dict = {}
         self._fit_model_table_dict = {}
 
     @property
@@ -36,19 +37,22 @@ class _RegressionModelTable(object):
         self._fit_model_table_dict = {LABEL_NAME: None for LABEL_NAME in label_names}
 
     def evaluate_label_models(self, x, y, label_name):
-        label_evaluation_list = list(map(lambda model: self.evaluate_model(model, x, y), self._regression_model_list))
-        self._table_evaluation_dict[label_name] = label_evaluation_list
+        label_tuple_list = list(map(lambda model: self.evaluate_model(model, x, y), self._regression_model_list))
+        # print("TUPLES! Window, Model", label_tuple_list[0][0], label_tuple_list[0][0]._model)
+        self._all_fit_models_table_dict[label_name] = [T[0] for T in label_tuple_list]
+        self._table_evaluation_dict[label_name] = [T[1] for T in label_tuple_list]
 
     def evaluate_model(self, model, x, y):
-        return self._function_to_evaluate_model(model, x, y)
+        model, value = self._function_to_evaluate_model(model, x, y)
+        return model, value
 
     def return_selected_label_model(self, label_name):
         if len(self._regression_model_list) == 1:
-            print("unique model")
-            return self._regression_model_list[0]
+            # print("unique model")
+            return self._all_fit_models_table_dict[label_name][0]
         if self._is_any_none_in_list(self._table_evaluation_dict[label_name]):
             raise ValueError("Some models were not evaluated")
-        return self._function_to_select_model(self._regression_model_list, self._table_evaluation_dict[label_name])
+        return self._function_to_select_model(self._all_fit_models_table_dict[label_name], self._table_evaluation_dict[label_name])
 
     @staticmethod
     def _is_any_none_in_list(list_):

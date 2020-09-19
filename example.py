@@ -72,13 +72,13 @@ exp_day_mult_reg_model = ExponentialSmoothingModel(exponential_params=exp_model_
 reg_models = [exp_day_mult_reg_model, ArimaModel((3, 0, 1), model_selection_func),
               ArimaModel((5, 0, 1), model_selection_func), ArimaModel((7, 0, 1), model_selection_func)]
 
-reg_model_evaluate_func = EvaluateModel.split_evaluate_function(test_size=0.33, evaluate_func=ErrorComputation.MAPE)
+reg_model_evaluate_func = EvaluateModel.split_evaluate_function_model(test_size=0.33, evaluate_func=ErrorComputation.MAPE)
 # reg_model_evaluate_func = EvaluateModel.split_evaluate_function(test_size=0.0033, evaluate_func=ErrorComputation.MAPE)
 reg_model_selection_func = EvaluateModel.select_min_error_model
 
 ensemble_model = EnsembleModel(kmeans, reg_models,
-                                    function_to_evaluate_model=reg_model_evaluate_func,
-                                    function_to_select_model=reg_model_selection_func)
+                               function_to_evaluate_model=reg_model_evaluate_func,
+                               function_to_select_model=reg_model_selection_func)
 
 ensemble_model = ensemble_model.fit(X_train, y_train)
 forecast_scaled = ensemble_model.predict(X_test, H)
